@@ -20,13 +20,16 @@
             <nav class="sb-sidenav accordion sb-sidenav-light" id="sidenavAccordion">
                 <div class="sb-sidenav-menu">
                     <div class="nav">
-                        <!-- Back to Homepage -->
                         <a class="nav-link" href="../index.html">
                             <div class="sb-nav-link-icon"><i class="fas fa-home"></i></div>
                             Back to Homepage
                         </a>
-
-                        <!-- Kategori Section -->
+                        
+                        <a class="nav-link" href="admin.html">
+                            <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+                            Dashboard
+                        </a>
+                        
                         <div class="sb-sidenav-menu-heading">Kategori</div>
                         <a class="nav-link" href="teknologi.php">
                             <div class="sb-nav-link-icon"><i class="fas fa-laptop"></i></div>
@@ -63,25 +66,30 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>Contoh Judul 1</td>
-                                        <td>Ini adalah isi dari artikel contoh 1.</td>
-                                        <td>Teknologi</td>
-                                        <td>2024-10-31</td>
-                                        <td><img src="path/to/image1.jpg" alt="Gambar 1" style="width: 50px;"></td>
-                                        <td>150</td>
-                                    </tr>
-                                    <tr>
-                                        <td>2</td>
-                                        <td>Contoh Judul 2</td>
-                                        <td>Ini adalah isi dari artikel contoh 2.</td>
-                                        <td>Lifestyle</td>
-                                        <td>2024-10-30</td>
-                                        <td><img src="path/to/image2.jpg" alt="Gambar 2" style="width: 50px;"></td>
-                                        <td>200</td>
-                                    </tr>
-                                    <!-- Tambahkan lebih banyak baris sesuai kebutuhan -->
+                                    <?php
+                                    include '../database/config.php'; // Menghubungkan dengan database
+
+                                    // Mengambil data terbaru dari tabel artikel
+                                    $sql = "SELECT * FROM artikel ORDER BY id DESC";
+                                    $result = $conn->query($sql);
+
+                                    // Menampilkan data di tabel
+                                    if ($result->num_rows > 0) {
+                                        while ($b = $result->fetch_assoc()) {
+                                            echo "<tr>
+                                                    <td>{$b['id']}</td>
+                                                    <td>{$b['judul']}</td>
+                                                    <td>" . substr($b['isi'], 0, 50) . "...</td>
+                                                    <td>{$b['kategori']}</td>
+                                                    <td>{$b['tanggal_publikasi']}</td>
+                                                    <td><img src='{$b['images']}' alt='Gambar' style='width: 50px;'></td>
+                                                    <td>{$b['view']}</td>
+                                                </tr>";
+                                        }
+                                    } else {
+                                        echo "<tr><td colspan='7' class='text-center'>Tidak ada berita</td></tr>";
+                                    }
+                                    ?>
                                 </tbody>
                             </table>
                         </div>

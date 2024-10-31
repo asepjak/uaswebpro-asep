@@ -4,15 +4,15 @@
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-    <meta name="description" content="" />
-    <meta name="author" content="" />
+    <meta name="description" content="Tambah Berita Teknologi - Admin Panel" />
+    <meta name="author" content="Admin" />
     <title>Tambah Berita Teknologi - Admin Panel</title>
     <link href="css/styles.css" rel="stylesheet" />
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" />
 </head>
 <body class="sb-nav-fixed">
-    <?php include 'config.php'; // Menyertakan file konfigurasi ?>
+    <?php include '../database/config.php'; // Pastikan file konfigurasi sudah benar ?>
 
     <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
         <a class="navbar-brand ps-3" href="index.html">Admin Panel</a>
@@ -25,6 +25,10 @@
                         <a class="nav-link" href="../index.html">
                             <div class="sb-nav-link-icon"><i class="fas fa-home"></i></div>
                             Back to Homepage
+                        </a>
+                        <a class="nav-link" href="admin.php">
+                            <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+                            Dashboard
                         </a>
                         <div class="sb-sidenav-menu-heading">Kategori</div>
                         <a class="nav-link" href="teknologi.php">
@@ -49,6 +53,33 @@
                     <h1 class="mt-4">Tambah Berita Teknologi</h1>
                     <div class="card mb-4">
                         <div class="card-body">
+                            <?php
+                            if (isset($_POST['submit'])) {
+                                $judul = $_POST['judul'];
+                                $isi = $_POST['isi'];
+                                $author = $_POST['author'];
+                                $tanggal_publikasi = $_POST['tanggal_publikasi'];
+                                $target_dir = "../upload/";
+                                $target_file = $target_dir . basename($_FILES["images"]["name"]);
+
+                                // Proses unggah gambar
+                                if (move_uploaded_file($_FILES["images"]["tmp_name"], $target_file)) {
+                                    // Masukkan data ke database
+                                    $sql = "INSERT INTO artikel (judul, isi, author, tanggal_publikasi, images) VALUES (?, ?, ?, ?, ?)";
+                                    $stmt = $conn->prepare($sql);
+                                    $stmt->bind_param("sssss", $judul, $isi, $author, $tanggal_publikasi, $target_file);
+
+                                    if ($stmt->execute()) {
+                                        echo "<p class='text-success'>Berita berhasil ditambahkan!</p>";
+                                    } else {
+                                        echo "<p class='text-danger'>Gagal menambah berita.</p>";
+                                    }
+                                } else {
+                                    echo "<p class='text-danger'>Gagal mengunggah gambar.</p>";
+                                }
+                            }
+                            ?>
+
                             <form action="" method="POST" enctype="multipart/form-data">
                                 <div class="mb-3">
                                     <label for="judul" class="form-label">Judul</label>
@@ -92,46 +123,24 @@
                                 </thead>
                                 <tbody>
                                     <?php
-
-                                    @include '../database/config.php';
-                                    // Memproses form jika disubmit
-                                    if (isset($_POST['submit'])) {
-                                        $judul = $_POST['judul'];
-                                        $isi = $_POST['isi'];
-                                        $author = $_POST['author'];
-                                        $tanggal_publikasi = $_POST['tanggal_publikasi'];
-
-                                        // Mengupload gambar
-                                        $target_dir = "uploads/";
-                                        $target_file = $target_dir . basename($_FILES["images"]["name"]);
-                                        move_uploaded_file($_FILES["images"]["tmp_name"], $target_file);
-
-                                        // Menyimpan berita ke database
-                                        $sql = "INSERT INTO berita (judul, isi, author, tanggal_publikasi, gambar) VALUES (?, ?, ?, ?, ?)";
-                                        $stmt = $conn->prepare($sql);
-                                        $stmt->bind_param("sssss", $judul, $isi, $author, $tanggal_publikasi, $target_file);
-                                        $stmt->execute();
-                                    }
-
-                                    // Mengambil berita dari database
-                                    $sql = "SELECT * FROM berita ORDER BY id DESC";
+                                    $sql = "SELECT * FROM artikel ORDER BY id DESC";
                                     $result = $conn->query($sql);
 
-                                    // Menampilkan berita
-                                    if ($result->num_rows > 0) {
+                                    if ($result && $result->num_rows > 0) {
                                         while ($b = $result->fetch_assoc()) {
                                             echo "<tr>
                                                     <td>{$b['id']}</td>
-                                                    <td>{$b['judul']}</td>
-                                                    <td>{$b['isi']}</td>
-                                                    <td>{$b['author']}</td>
+                                                    <td>" . htmlspecialchars($b['judul']) . "</td>
+                                                    <td>" . htmlspecialchars(substr($b['isi'], 0, 50)) . "...</td>
+                                                    <td>" . htmlspecialchars($b['author']) . "</td>
                                                     <td>{$b['tanggal_publikasi']}</td>
-                                                    <td><img src='{$b['gambar']}' alt='Gambar' style='width: 50px;'></td>
+                                                    <td><img src='" . htmlspecialchars($b['images']) . "' alt='Gambar' style='width: 50px;'></td>
                                                 </tr>";
                                         }
                                     } else {
                                         echo "<tr><td colspan='6' class='text-center'>Tidak ada berita</td></tr>";
                                     }
+                                    $conn->close();
                                     ?>
                                 </tbody>
                             </table>
