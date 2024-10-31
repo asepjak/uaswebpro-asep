@@ -118,8 +118,8 @@ Author URL: http://w3layouts.com
     <!-- //header -->
 
     <!-- Di dalam div class="w3l-homeblock1" -->
-    <!-- Di dalam div class="w3l-homeblock1" -->
-    <div class="w3l-homeblock1">
+
+    <class="w3l-homeblock1">
         <div class="container pt-lg-5 pt-md-4">
             <!-- block -->
             <div class="row">
@@ -238,14 +238,6 @@ Author URL: http://w3layouts.com
                 </div>
             </div>
         </div>
-    </div>
-    </div>
-    </div>
-
-
-
-
-    </div>
     </div>
     <!-- footer -->
     <footer class="w3l-footer-16">
