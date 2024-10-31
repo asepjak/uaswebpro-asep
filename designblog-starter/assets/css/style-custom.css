@@ -1,0 +1,118 @@
+/* Custom styling untuk cards */
+.card {
+    border: none;
+    box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    margin-bottom: 30px;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+}
+
+.card-header {
+    border: none;
+    padding: 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.card-img-bottom {
+    height: 200px;
+    object-fit: cover;
+    border-radius: 8px 8px 0 0;
+}
+
+.label-blue {
+    background: #0d6efd;
+    color: #fff;
+    padding: 5px 15px;
+    border-radius: 3px;
+    font-size: 12px;
+    display: inline-block;
+    margin-bottom: 10px;
+}
+
+.blog-desc {
+    color: #333;
+    font-size: 1.1rem;
+    font-weight: 600;
+    line-height: 1.4;
+    margin-bottom: 10px;
+    display: block;
+}
+
+.blog-desc:hover {
+    color: #0d6efd;
+    text-decoration: none;
+}
+
+/* Trending section styling */
+.trending .post-grid {
+    background: #fff;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    transition: all 0.3s ease;
+}
+
+.trending .post-grid:hover {
+    transform: translateX(5px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.trending .post-img img {
+    height: 80px;
+    width: 100%;
+    object-fit: cover;
+    border-radius: 6px;
+}
+
+.trending .post-info {
+    padding-left: 15px;
+}
+
+.trending .post-number {
+    color: #0d6efd;
+    font-weight: 600;
+    font-size: 0.85rem;
+}
+
+.trending .post-title {
+    font-size: 0.9rem;
+    margin: 5px 0;
+}
+
+.trending .post-title a {
+    color: #333;
+    text-decoration: none;
+}
+
+.trending .post-title a:hover {
+    color: #0d6efd;
+}
+
+/* Meta information styling */
+.meta-item {
+    font-size: 0.85rem;
+    color: #666;
+    margin-right: 15px;
+}
+
+.meta-item i {
+    margin-right: 5px;
+    color: #0d6efd;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .trending {
+        margin-top: 30px;
+    }
+    
+    .card-img-bottom {
+        height: 180px;
+    }
+}

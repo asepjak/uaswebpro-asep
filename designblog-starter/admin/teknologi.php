@@ -62,16 +62,17 @@
                                 $isi = $_POST['isi'];
                                 $author = $_POST['author'];
                                 $tanggal_publikasi = $_POST['tanggal_publikasi'];
+                                $kategori = $_POST['kategori'];
                                 $target_dir = "../upload/";
                                 $target_file = $target_dir . basename($_FILES["images"]["name"]);
-
+                            
                                 // Proses unggah gambar
                                 if (move_uploaded_file($_FILES["images"]["tmp_name"], $target_file)) {
                                     // Masukkan data ke database
-                                    $sql = "INSERT INTO artikel (judul, isi, author, tanggal_publikasi, images) VALUES (?, ?, ?, ?, ?)";
+                                    $sql = "INSERT INTO artikel (judul, isi, author, tanggal_publikasi, images, kategori) VALUES (?, ?, ?, ?, ?, ?)";
                                     $stmt = $conn->prepare($sql);
-                                    $stmt->bind_param("sssss", $judul, $isi, $author, $tanggal_publikasi, $target_file);
-
+                                    $stmt->bind_param("ssssss", $judul, $isi, $author, $tanggal_publikasi, $target_file, $kategori);
+                            
                                     if ($stmt->execute()) {
                                         echo "<p class='text-success'>Berita berhasil ditambahkan!</p>";
                                     } else {
@@ -104,6 +105,7 @@
                                     <label for="images" class="form-label">Gambar</label>
                                     <input type="file" class="form-control" id="images" name="images" accept="image/*" required>
                                 </div>
+                                <input type="hidden" name="kategori" value="teknologi">
                                 <button type="submit" class="btn btn-primary" name="submit">Tambah Berita</button>
                             </form>
                         </div>

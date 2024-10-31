@@ -117,236 +117,135 @@ Author URL: http://w3layouts.com
     </header>
     <!-- //header -->
 
+    <!-- Di dalam div class="w3l-homeblock1" -->
+    <!-- Di dalam div class="w3l-homeblock1" -->
     <div class="w3l-homeblock1">
         <div class="container pt-lg-5 pt-md-4">
             <!-- block -->
             <div class="row">
                 <div class="col-lg-9 most-recent">
-                    <h3 class="section-title-left">Most Recent posts </h3>
-                    <div class="list-view ">
-                        <div class="grids5-info img-block-mobile">
-                            <div class="blog-info align-self">
-                                <span class="category">Technology</span>
-                                <a href="#blog-single" class="blog-desc mt-0">Curated Collection Post : 8 Examples of
-                                    Evolution in Action
-                                </a>
-                                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Incidunt tenetur accusamus
-                                    voluptas. Mollitia, natus ipsam maiores placeat elit.</p>
-                                <div class="author align-items-center mt-3 mb-1">
-                                    <a href="#author">Johnson smith</a> in <a href="#url">Design</a>
-                                </div>
-                                <ul class="blog-meta">
-                                    <li class="meta-item blog-lesson">
-                                        <span class="meta-value"> April 13, 2020 </span>
-                                    </li>
-                                    <li class="meta-item blog-students">
-                                        <span class="meta-value"> 6 read</span>
-                                    </li>
-                                </ul>
-                            </div>
-                            <a href="#blog-single" class="d-block zoom mt-md-0 mt-3"><img src="assets/images/8.jpg"
-                                    alt="" class="img-fluid radius-image news-image"></a>
-                        </div>
+                    <h3 class="section-title-left">Most Recent Posts </h3>
+                    <div class="row">
+                        <?php
+                        include 'database/config.php';
 
-                        <div class="grids5-info img-block-mobile mt-5">
-                            <div class="blog-info align-self">
-                                <span class="category">Lifestyle</span>
-                                <a href="#blog-single" class="blog-desc mt-0">The Key Benefits of Studying Online
-                                    [Infographic]
-                                </a>
-                                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Incidunt tenetur accusamus
-                                    voluptas. Mollitia, natus ipsam maiores beatae elit.</p>
-                                <div class="author align-items-center mt-3 mb-1">
-                                    <a href="#author">Johnson smith</a> in <a href="#url">Design</a>
-                                </div>
-                                <ul class="blog-meta">
-                                    <li class="meta-item blog-lesson">
-                                        <span class="meta-value"> April 13, 2020 </span>
-                                    </li>
-                                    <li class="meta-item blog-students">
-                                        <span class="meta-value"> 6 read</span>
-                                    </li>
-                                </ul>
-                            </div>
-                            <a href="#blog-single" class="d-block zoom mt-md-0 mt-3"><img src="assets/images/9.jpg"
-                                    alt="" class="img-fluid radius-image news-image"></a>
-                        </div>
+                        // Query untuk mengambil artikel terbaru
+                        $sql = "SELECT * FROM artikel ORDER BY tanggal_publikasi DESC LIMIT 6";
+                        $result = $conn->query($sql);
 
-                        <div class="grids5-info img-block-mobile mt-5">
-                            <div class="blog-info align-self">
-                                <span class="category">Lifestyle</span>
-                                <a href="#blog-single" class="blog-desc mt-0">How to Write a Blog Post: A Step-by-Step
-                                    Guide
-                                </a>
-                                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Incidunt tenetur accusamus
-                                    voluptas. Mollitia, natus ipsam maiores beatae elit.</p>
-                                <div class="author align-items-center mt-3 mb-1">
-                                    <a href="#author">Johnson smith</a> in <a href="#url">Design</a>
+                        if ($result->num_rows > 0) {
+                            while ($row = $result->fetch_assoc()) {
+                        ?>
+                                <div class="col-lg-4 col-md-6 item">
+                                    <div class="card">
+                                        <div class="card-header p-0 position-relative">
+                                            <a href="single.php?id=<?php echo $row['id']; ?>">
+                                                <?php if (!empty($row['images'])): ?>
+                                                    <img class="card-img-bottom d-block radius-image-full"
+                                                        src="admin/<?php echo htmlspecialchars($row['images']); ?>"
+                                                        alt="<?php echo htmlspecialchars($row['judul']); ?>"
+                                                        style="height: 200px; object-fit: cover;">
+                                                <?php else: ?>
+                                                    <img class="card-img-bottom d-block radius-image-full"
+                                                        src="assets/images/default-image.jpg"
+                                                        alt="Default Image"
+                                                        style="height: 200px; object-fit: cover;">
+                                                <?php endif; ?>
+                                            </a>
+                                        </div>
+                                        <div class="card-body blog-details">
+                                            <span class="label-blue"><?php echo $row['kategori']; ?></span>
+                                            <a href="single.php?id=<?php echo $row['id']; ?>" class="blog-desc">
+                                                <?php echo $row['judul']; ?>
+                                            </a>
+                                            <p><?php echo substr($row['isi'], 0, 100) . '...'; ?></p>
+                                            <div class="author align-items-center mt-3 mb-1">
+                                                <div class="author-left">
+                                                    <span class="meta-item">
+                                                        <i class="far fa-user"></i> <?php echo $row['author']; ?>
+                                                    </span>
+                                                </div>
+                                                <div class="author-right">
+                                                    <span class="meta-item">
+                                                        <i class="far fa-calendar-alt"></i>
+                                                        <?php echo date('M d, Y', strtotime($row['tanggal_publikasi'])); ?>
+                                                    </span>
+                                                    <span class="meta-item">
+                                                        <i class="fas fa-eye"></i> <?php echo $row['view']; ?> views
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-                                <ul class="blog-meta">
-                                    <li class="meta-item blog-lesson">
-                                        <span class="meta-value"> April 13, 2020 </span>
-                                    </li>
-                                    <li class="meta-item blog-students">
-                                        <span class="meta-value"> 6 read</span>
-                                    </li>
-                                </ul>
-                            </div>
-                            <a href="#blog-single" class="d-block zoom mt-md-0 mt-3"><img src="assets/images/16.jpg"
-                                    alt="" class="img-fluid radius-image news-image"></a>
-                        </div>
-
-                        <div class="grids5-info img-block-mobile mt-5">
-                            <div class="blog-info align-self">
-                                <span class="category">Technology</span>
-                                <a href="#blog-single" class="blog-desc mt-0">Ivy Goes Mobile With New App for Designers
-                                </a>
-                                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Incidunt tenetur accusamus
-                                    voluptas. Mollitia, natus ipsam maiores beatae elit.</p>
-                                <div class="author align-items-center mt-3 mb-1">
-                                    <a href="#author">Johnson smith</a> in <a href="#url">Design</a>
-                                </div>
-                                <ul class="blog-meta">
-                                    <li class="meta-item blog-lesson">
-                                        <span class="meta-value"> April 13, 2020 </span>
-                                    </li>
-                                    <li class="meta-item blog-students">
-                                        <span class="meta-value"> 6 read</span>
-                                    </li>
-                                </ul>
-                            </div>
-                            <a href="#blog-single" class="d-block zoom mt-md-0 mt-3"><img src="assets/images/14.jpg"
-                                    alt="" class="img-fluid radius-image news-image"></a>
-                        </div>
-
-                        <div class="grids5-info img-block-mobile mt-5">
-                            <div class="blog-info align-self">
-                                <span class="category">Lifestyle </span>
-                                <a href="#blog-single" class="blog-desc mt-0">What I Wish I Had Known Before Writing My
-                                    First Book
-                                </a>
-                                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Incidunt tenetur accusamus
-                                    voluptas. Mollitia, natus ipsam maiores beatae elit.</p>
-                                <div class="author align-items-center mt-3 mb-1">
-                                    <a href="#author">Johnson smith</a> in <a href="#url">Design</a>
-                                </div>
-                                <ul class="blog-meta">
-                                    <li class="meta-item blog-lesson">
-                                        <span class="meta-value"> April 13, 2020 </span>
-                                    </li>
-                                    <li class="meta-item blog-students">
-                                        <span class="meta-value"> 6 read</span>
-                                    </li>
-                                </ul>
-                            </div>
-                            <a href="#blog-single" class="d-block zoom mt-md-0 mt-3"><img src="assets/images/15.jpg"
-                                    alt="" class="img-fluid radius-image news-image"></a>
-                        </div>
-
+                        <?php
+                            }
+                        }
+                        ?>
                     </div>
-                    <!-- pagination -->
-                    <div class="pagination-wrapper mt-5">
-                        <ul class="page-pagination">
-                            <li><a class="next" href="#url"><span class="fa fa-angle-left"></span></a></li>
-                            <li><span aria-current="page" class="page-numbers current">1</span></li>
-                            <li><a class="page-numbers" href="#url">2</a></li>
-                            <li><a class="page-numbers" href="#url">3</a></li>
-                            <li><a class="page-numbers" href="#url">....</a></li>
-                            <li><a class="page-numbers" href="#url">10</a></li>
-                            <li><a class="next" href="#url"><span class="fa fa-angle-right"></span></a></li>
-                        </ul>
-                    </div>
-                    <!-- //pagination -->
                 </div>
+
                 <div class="col-lg-3 trending mt-lg-0 mt-5 mb-lg-5">
                     <div class="pos-sticky">
-                        <h3 class="section-title-left">Trending </h3>
+                        <h3 class="section-title-left mb-4">Trending </h3>
+                        <div class="grids5-info">
+                            <?php
+                            // Query untuk mengambil artikel trending berdasarkan view
+                            $sql_trending = "SELECT * FROM artikel ORDER BY view DESC LIMIT 5";
+                            $result_trending = $conn->query($sql_trending);
 
-                        <div class="grids5-info">
-                            <h4>01.</h4>
-                            <div class="blog-info">
-                                <a href="#blog-single" class="blog-desc1"> 10 Fresh Ways to Get Better Results From Your
-                                    Blog Posts
-                                </a>
-                                <div class="author align-items-center mt-2 mb-1">
-                                    <a href="#author">Johnson smith</a> in <a href="#url">Design</a>
-                                </div>
-                                <ul class="blog-meta">
-                                    <li class="meta-item blog-lesson">
-                                        <span class="meta-value"> April 13, 2020 </span>
-                                    </li>
-                                    <li class="meta-item blog-students">
-                                        <span class="meta-value"> 6 read</span>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                        <div class="grids5-info">
-                            <h4>02.</h4>
-                            <div class="blog-info">
-                                <a href="#blog-single" class="blog-desc1"> How to Optimize for on-page SEO.
-                                </a>
-                                <div class="author align-items-center mt-2 mb-1">
-                                    <a href="#author">Johnson smith</a> in <a href="#url">Design</a>
-                                </div>
-                                <ul class="blog-meta">
-                                    <li class="meta-item blog-lesson">
-                                        <span class="meta-value"> April 13, 2020 </span>
-                                    </li>
-                                    <li class="meta-item blog-students">
-                                        <span class="meta-value"> 6 read</span>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                        <div class="grids5-info">
-                            <h4>03.</h4>
-                            <div class="blog-info">
-                                <a href="#blog-single" class="blog-desc1"> What to Post on the Instagram
-                                </a>
-                                <div class="author align-items-center mt-2 mb-1">
-                                    <a href="#author">Johnson smith</a> in <a href="#url">Design</a>
-                                </div>
-                                <ul class="blog-meta">
-                                    <li class="meta-item blog-lesson">
-                                        <span class="meta-value"> April 13, 2020 </span>
-                                    </li>
-                                    <li class="meta-item blog-students">
-                                        <span class="meta-value"> 6 read</span>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                        <div class="grids5-info">
-                            <h4>04.</h4>
-                            <div class="blog-info">
-                                <a href="#blog-single" class="blog-desc1"> 18 Photo & Video Ideas to Spark Inspiration
-                                </a>
-                                <div class="author align-items-center mt-3 mb-1">
-                                    <a href="#author">Johnson smith</a> in <a href="#url">Design</a>
-                                </div>
-                                <ul class="blog-meta">
-                                    <li class="meta-item blog-lesson">
-                                        <span class="meta-value"> April 13, 2020 </span>
-                                    </li>
-                                    <li class="meta-item blog-students">
-                                        <span class="meta-value"> 6 read</span>
-                                    </li>
-                                </ul>
-                            </div>
+                            if ($result_trending->num_rows > 0) {
+                                while ($trend = $result_trending->fetch_assoc()) {
+                            ?>
+                                    <div class="trending-post mb-4">
+                                        <div class="post-grid row">
+                                            <div class="post-img col-4">
+                                                <a href="single.php?id=<?php echo $trend['id']; ?>">
+                                                    <?php if (!empty($trend['images'])): ?>
+                                                        <img src="admin/<?php echo htmlspecialchars($trend['images']); ?>"
+                                                            class="img-fluid radius-image"
+                                                            alt="<?php echo htmlspecialchars($trend['judul']); ?>">
+                                                    <?php else: ?>
+                                                        <img src="assets/images/default-image.jpg"
+                                                            class="img-fluid radius-image"
+                                                            alt="Default Image">
+                                                    <?php endif; ?>
+                                                </a>
+                                            </div>
+                                            <div class="post-info col-8 pl-4">
+                                                <div class="post-number mb-2"><?php echo $trend['view']; ?> views</div>
+                                                <h5 class="post-title mb-2">
+                                                    <a href="single.php?id=<?php echo $trend['id']; ?>">
+                                                        <?php echo htmlspecialchars(substr($trend['judul'], 0, 40)) . (strlen($trend['judul']) > 40 ? '...' : ''); ?>
+                                                    </a>
+                                                </h5>
+                                                <div class="post-meta">
+                                                    <span class="meta-item text-muted">
+                                                        <i class="far fa-calendar-alt mr-2"></i>
+                                                        <?php echo date('M d, Y', strtotime($trend['tanggal_publikasi'])); ?>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                            <?php
+                                }
+                            }
+                            $conn->close();
+                            ?>
                         </div>
                     </div>
                 </div>
             </div>
-            <!-- //block-->
-
-            <!-- ad block -->
-            <!-- <div class="ad-block text-center mt-5">
-                <a href="#url"><img src="assets/images/ad.gif" class="img-fluid" alt="ad image" /></a>
-            </div> -->
-            <!-- //ad block -->
-
         </div>
+    </div>
+    </div>
+    </div>
+
+
+
+
+    </div>
     </div>
     <!-- footer -->
     <footer class="w3l-footer-16">
@@ -354,7 +253,8 @@ Author URL: http://w3layouts.com
             <div class="container">
                 <div class="copy-right">
                     <h6>© 2024 Web Programming Blog . Made by <i>(your name)</i> with <span class="fa fa-heart" aria-hidden="true"></span><br>Designed by
-                        <a href="https://w3layouts.com">W3layouts</a> </h6>
+                        <a href="https://w3layouts.com">W3layouts</a>
+                    </h6>
                 </div>
                 <ul class="author-icons mt-4">
                     <li><a class="facebook" href="#url"><span class="fa fa-facebook" aria-hidden="true"></span></a>
@@ -375,7 +275,7 @@ Author URL: http://w3layouts.com
         <!-- move top -->
         <script>
             // When the user scrolls down 20px from the top of the document, show the button
-            window.onscroll = function () {
+            window.onscroll = function() {
                 scrollFunction()
             };
 
@@ -404,8 +304,8 @@ Author URL: http://w3layouts.com
 
     <!-- disable body scroll which navbar is in active -->
     <script>
-        $(function () {
-            $('.navbar-toggler').click(function () {
+        $(function() {
+            $('.navbar-toggler').click(function() {
                 $('body').toggleClass('noscroll');
             })
         });

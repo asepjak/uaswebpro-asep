@@ -40,7 +40,7 @@ Author URL: http://w3layouts.com
 			<div class="collapse navbar-collapse" id="navbarSupportedContent">
 				<ul class="navbar-nav ml-auto">
 					<li class="nav-item @@home__active">
-						<a class="nav-link" href="index.html">Home</a>
+						<a class="nav-link" href="index.php">Home</a>
 					</li>
 					<li class="nav-item dropdown active">
 						<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
@@ -58,6 +58,10 @@ Author URL: http://w3layouts.com
                     <li class="nav-item @@about__active">
                         <a class="nav-link" href="about.html">About</a>
                     </li>
+
+                    <li class="nav-item @@admin__active">
+						<a class="nav-link" href="admin/admin.php">Admin</a>
+					</li>
 				</ul>
 
 				<!--/search-right-->
