@@ -1,459 +1,385 @@
-<!--
-Author: W3layouts
-Author URL: http://w3layouts.com
--->
+<?php
+include 'database/config.php';
+
+// Konfigurasi pagination
+$limit = 6; // jumlah artikel per halaman
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+$start = ($page - 1) * $limit;
+
+// Query untuk menghitung total artikel lifestyle
+$count_query = "SELECT COUNT(*) as total FROM artikel WHERE kategori = 'lifestyle'";
+$count_result = $conn->query($count_query);
+$total_records = $count_result->fetch_assoc()['total'];
+$total_pages = ceil($total_records / $limit);
+
+// Query untuk mengambil artikel lifestyle dengan pagination
+$sql = "SELECT * FROM artikel WHERE kategori = 'lifestyle' ORDER BY tanggal_publikasi DESC LIMIT $start, $limit";
+$result = $conn->query($sql);
+
+// Query untuk artikel trending lifestyle
+$sql_trending = "SELECT * FROM artikel WHERE kategori = 'lifestyle' ORDER BY view DESC LIMIT 5";
+$result_trending = $conn->query($sql_trending);
+?>
+
 <!doctype html>
 <html lang="en">
-  <head>
+
+<head>
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <title>Web Programming - Final Semester Exam</title>
-    
+    <title>Lifestyle Posts - Web Programming Blog</title>
+
     <link href="https://fonts.googleapis.com/css2?family=Cabin:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="//fonts.googleapis.com/css?family=Open+Sans:300,400,600,700,800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 
     <!-- Template CSS -->
     <link rel="stylesheet" href="assets/css/style-starter.css">
-  </head>
-  <body>
-<!-- header -->
-<header class="w3l-header">
-	<!--/nav-->
-	<nav class="navbar navbar-expand-lg navbar-light fill px-lg-0 py-0 px-3">
-		<div class="container">
-			<a class="navbar-brand" href="index.html">
-				<span class="fa fa-pencil-square-o"></span> Design Blog</a>
-			<!-- if logo is image enable this   
-						<a class="navbar-brand" href="#index.html">
-							<img src="image-path" alt="Your logo" title="Your logo" style="height:35px;" />
-						</a> -->
-			<button class="navbar-toggler collapsed" type="button" data-toggle="collapse"
-				data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
-				aria-label="Toggle navigation">
-				<!-- <span class="navbar-toggler-icon"></span> -->
-				<span class="fa icon-expand fa-bars"></span>
-				<span class="fa icon-close fa-times"></span>
-			</button>
 
-			<div class="collapse navbar-collapse" id="navbarSupportedContent">
-				<ul class="navbar-nav ml-auto">
-					<li class="nav-item @@home__active">
-						<a class="nav-link" href="index.html">Home</a>
-					</li>
-					<li class="nav-item dropdown active">
-						<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
-							data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-							Categories <span class="fa fa-angle-down"></span>
-						</a>
-						<div class="dropdown-menu" aria-labelledby="navbarDropdown">
-							<a class="dropdown-item @@cp__active" href="teknologi.php">Technology posts</a>
-							<a class="dropdown-item active" href="lifestyle.html">Lifestyle posts</a>
-						</div>
-					</li>
-					<li class="nav-item @@contact__active">
-						<a class="nav-link" href="contact.html">Contact</a>
-					</li>
-                    <li class="nav-item @@about__active">
-                        <a class="nav-link" href="about.html">About</a>
-                    </li>
-				</ul>
+    <style>
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
 
-				<!--/search-right-->
-				<div class="search-right mt-lg-0 mt-2">
-					<a href="#search" title="search"><span class="fa fa-search" aria-hidden="true"></span></a>
-					<!-- search popup -->
-					<div id="search" class="pop-overlay">
-						<div class="popup">
-							<h3 class="hny-title two">Search here</h3>
-							<form action="#" method="Get" class="search-box">
-								<input type="search" placeholder="Search for blog posts" name="search"
-									required="required" autofocus="">
-								<button type="submit" class="btn">Search</button>
-							</form>
-							<a class="close" href="#close">×</a>
-						</div>
-					</div>
-					<!-- /search popup -->
-				</div>
-				<!--//search-right-->
-                    <!-- author -->
-                    <!-- <div class="header-author d-flex ml-lg-4 pl-2 mt-lg-0 mt-3">
-                        <a class="img-circle img-circle-sm" href="#author">
-                            <img src="assets/images/author.jpg" class="img-fluid" alt="...">
-                        </a>
-                        <div class="align-self ml-3">
-                            <a href="#author">
-                                <h5>Alexander</h5>
+        .pagination a,
+        .pagination strong {
+            padding: 8px 16px;
+            margin: 0 4px;
+            border: 1px solid #ddd;
+            color: black;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+
+        .pagination a:hover {
+            background-color: #f2f2f2;
+        }
+
+        .pagination strong {
+            background-color: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+
+        #movetop {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 99;
+            border: none;
+            outline: none;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            padding: 15px;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        #movetop:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- header -->
+    <header class="w3l-header">
+        <nav class="navbar navbar-expand-lg navbar-light fill px-lg-0 py-0 px-3">
+            <div class="container">
+                <a class="navbar-brand" href="index.php">
+                    <span class="fa fa-pencil-square-o"></span> Web Programming Blog
+                </a>
+                <button class="navbar-toggler collapsed" type="button" data-toggle="collapse"
+                    data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                    aria-label="Toggle navigation">
+                    <span class="fa icon-expand fa-bars"></span>
+                    <span class="fa icon-close fa-times"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="index.php">Home</a>
+                        </li>
+                        <li class="nav-item dropdown active">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Categories <span class="fa fa-angle-down"></span>
                             </a>
-                            <span>Blog Writer</span>
-                        </div>
-                    </div> -->
-                    <!-- // author-->
-
-			</div>
-
-            <!-- toggle switch for light and dark theme -->
-            <div class="mobile-position">
-                <nav class="navigation">
-                    <div class="theme-switch-wrapper">
-                        <label class="theme-switch" for="checkbox">
-                            <input type="checkbox" id="checkbox">
-                            <div class="mode-container">
-                                <i class="gg-sun"></i>
-                                <i class="gg-moon"></i>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <a class="dropdown-item" href="teknologi.php">Technology posts</a>
+                                <a class="dropdown-item active" href="lifestyle.php">Lifestyle posts</a>
                             </div>
-                        </label>
-                    </div>
-                </nav>
-            </div>
-            <!-- //toggle switch for light and dark theme -->
-		</div>
-	</nav>
-	<!--//nav-->
-</header>
-<!-- //header -->
-
-<nav id="breadcrumbs" class="breadcrumbs">
-	<div class="container page-wrapper">
-		<a href="index.html">Home</a> / Categories / <span class="breadcrumb_last" aria-current="page">Lifestyle</span>
-	</div>
-</nav>
-<div class="w3l-searchblock w3l-homeblock1 py-5">
-    <div class="container py-lg-4 py-md-3">
-        <!-- block -->
-        <div class="row">
-            <div class="col-lg-8 most-recent">
-                <h3 class="section-title-left">Lifestyle</h3>
-               
-                <div class="row">
-                    <div class="col-lg-6 col-md-6 item">
-                        <div class="card">
-                            <div class="card-header p-0 position-relative">
-                                <a href="#blog-single">
-                                    <img class="card-img-bottom d-block radius-image" src="assets/images/p2.jpg" alt="Card image cap">
-                                </a>
-                            </div>
-                            <div class="card-body p-0 blog-details">
-                                <a href="#blog-single" class="blog-desc">Here are a few tips that will help you to get started about lifestyle
-                                </a>
-                                <p>Lorem ipsum dolor sit amet consectetur ipsum adipisicing elit. Qui eligendi
-                                    vitae sit.</p>
-                                <div class="author align-items-center mt-3 mb-1">
-                                    <a href="#author">Johnson smith</a> in <a href="#url">Design</a>
-                                </div>
-                                <ul class="blog-meta">
-                                    <li class="meta-item blog-lesson">
-                                        <span class="meta-value"> April 13, 2020 </span>
-                                    </li>
-                                    <li class="meta-item blog-students">
-                                        <span class="meta-value"> 6min read</span>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-6 col-md-6 item mt-md-0 mt-5">
-                        <div class="card">
-                            <div class="card-header p-0 position-relative">
-                                <a href="#blog-single">
-                                    <img class="card-img-bottom d-block radius-image" src="assets/images/p1.jpg" alt="Card image cap">
-                                </a>
-                            </div>
-                            <div class="card-body p-0 blog-details">
-                                <a href="#blog-single" class="blog-desc">Before you start writing first blog post, you should make a content plan.
-                                </a>
-                                <p>Lorem ipsum dolor sit amet consectetur ipsum adipisicing elit. Qui eligendi
-                                    vitae sit.</p>
-                                <div class="author align-items-center mt-3 mb-1">
-                                    <a href="#author">Johnson smith</a> in <a href="#url">Design</a>
-                                </div>
-                                <ul class="blog-meta">
-                                    <li class="meta-item blog-lesson">
-                                        <span class="meta-value"> April 13, 2020 </span>
-                                    </li>
-                                    <li class="meta-item blog-students">
-                                        <span class="meta-value"> 6min read</span>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-6 col-md-6 item mt-5 pt-lg-3">
-                        <div class="card">
-                            <div class="card-header p-0 position-relative">
-                                <a href="#blog-single">
-                                    <img class="card-img-bottom d-block radius-image" src="assets/images/p4.jpg" alt="Card image cap">
-                                </a>
-                            </div>
-                            <div class="card-body p-0 blog-details">
-                                <a href="#blog-single" class="blog-desc">Guidelines to help you decide what your blog post should be about.
-                                </a>
-                                <p>Lorem ipsum dolor sit amet consectetur ipsum adipisicing elit. Qui eligendi
-                                    vitae sit.</p>
-                                <div class="author align-items-center mt-3 mb-1">
-                                    <a href="#author">Johnson smith</a> in <a href="#url">Design</a>
-                                </div>
-                                <ul class="blog-meta">
-                                    <li class="meta-item blog-lesson">
-                                        <span class="meta-value"> April 13, 2020 </span>
-                                    </li>
-                                    <li class="meta-item blog-students">
-                                        <span class="meta-value"> 6min read</span>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-6 col-md-6 item mt-5 pt-lg-3">
-                        <div class="card">
-                            <div class="card-header p-0 position-relative">
-                                <a href="#blog-single">
-                                    <img class="card-img-bottom d-block radius-image" src="assets/images/p3.jpg" alt="Card image cap">
-                                </a>
-                            </div>
-                            <div class="card-body p-0 blog-details">
-                                <a href="#blog-single" class="blog-desc">Now, Make money from blogging in easy steps
-                                </a>
-                                <p>Lorem ipsum dolor sit amet consectetur ipsum adipisicing elit. Qui eligendi
-                                    vitae sit.</p>
-                                <div class="author align-items-center mt-3 mb-1">
-                                    <a href="#author">Johnson smith</a> in <a href="#url">Design</a>
-                                </div>
-                                <ul class="blog-meta">
-                                    <li class="meta-item blog-lesson">
-                                        <span class="meta-value"> April 13, 2020 </span>
-                                    </li>
-                                    <li class="meta-item blog-students">
-                                        <span class="meta-value"> 6min read</span>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-6 col-md-6 item mt-5 pt-lg-3">
-                        <div class="card">
-                            <div class="card-header p-0 position-relative">
-                                <a href="#blog-single">
-                                    <img class="card-img-bottom d-block radius-image" src="assets/images/p7.jpg"
-                                        alt="Card image cap">
-                                </a>
-                            </div>
-                            <div class="card-body p-0 blog-details">
-                                <a href="#blog-single" class="blog-desc">Many ways by which your blog can earn passive income for you.
-                                </a>
-                                <p>Lorem ipsum dolor sit amet consectetur ipsum adipisicing elit. Qui eligendi
-                                    vitae sit.</p>
-                                <div class="author align-items-center mt-3 mb-1">
-                                    <a href="#author">Johnson smith</a> in <a href="#url">Design</a>
-                                </div>
-                                <ul class="blog-meta">
-                                    <li class="meta-item blog-lesson">
-                                        <span class="meta-value"> April 13, 2020 </span>
-                                    </li>
-                                    <li class="meta-item blog-students">
-                                        <span class="meta-value"> 6min read</span>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-6 col-md-6 item mt-5 pt-lg-3">
-                        <div class="card">
-                            <div class="card-header p-0 position-relative">
-                                <a href="#blog-single">
-                                    <img class="card-img-bottom d-block radius-image" src="assets/images/p8.jpg"
-                                        alt="Card image cap">
-                                </a>
-                            </div>
-                            <div class="card-body p-0 blog-details">
-                                <a href="#blog-single" class="blog-desc">Keyword research for dummies using the Google Keyword tool
-                                </a>
-                                <p>Lorem ipsum dolor sit amet consectetur ipsum adipisicing elit. Qui eligendi
-                                    vitae sit.</p>
-                                <div class="author align-items-center mt-3 mb-1">
-                                    <a href="#author">Johnson smith</a> in <a href="#url">Design</a>
-                                </div>
-                                <ul class="blog-meta">
-                                    <li class="meta-item blog-lesson">
-                                        <span class="meta-value"> April 13, 2020 </span>
-                                    </li>
-                                    <li class="meta-item blog-students">
-                                        <span class="meta-value"> 6min read</span>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- pagination -->
-                <div class="pagination-wrapper mt-5">
-                    <ul class="page-pagination">
-                        <li><span aria-current="page" class="page-numbers current">1</span></li>
-                        <li><a class="page-numbers" href="#url">2</a></li>
-                        <li><a class="page-numbers" href="#url">3</a></li>
-                        <li><a class="page-numbers" href="#url">4</a></li>
-                        <li><a class="page-numbers" href="#url">....</a></li>
-                        <li><a class="page-numbers" href="#url">15</a></li>
-                        <li><a class="next" href="#url"><span class="fa fa-angle-right"></span></a></li>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="contact.php">Contact</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="about.php">About</a>
+                        </li>
                     </ul>
-                </div>
-                <!-- //pagination -->
-            </div>
-            <div class="col-lg-4 trending mt-lg-0 mt-5 mb-lg-5">
-                <div class="pos-sticky">
-                    <h3 class="section-title-left">Trending </h3>
 
-                    <div class="grids5-info">
-                        <h4>01.</h4>
-                        <div class="blog-info">
-                            <a href="#blog-single" class="blog-desc1"> Few Ways to Readership and improving your blog
-                            </a>
-                            <div class="author align-items-center mt-2 mb-1">
-                                <a href="#author">Johnson smith</a> in <a href="#url">Design</a>
+                    <!-- search-right -->
+                    <div class="search-right mt-lg-0 mt-2">
+                        <a href="#search" title="search"><span class="fa fa-search" aria-hidden="true"></span></a>
+                        <!-- search popup -->
+                        <div id="search" class="pop-overlay">
+                            <div class="popup">
+                                <h3 class="hny-title two">Search here</h3>
+                                <form action="search.php" method="GET" class="search-box">
+                                    <input type="search" placeholder="Search for blog posts" name="q"
+                                        required="required" autofocus="">
+                                    <button type="submit" class="btn">Search</button>
+                                </form>
+                                <a class="close" href="#close">×</a>
                             </div>
-                            <ul class="blog-meta">
-                                <li class="meta-item blog-lesson">
-                                    <span class="meta-value"> April 13, 2020 </span>
-                                </li>
-                                <li class="meta-item blog-students">
-                                    <span class="meta-value"> 6min read</span>
-                                </li>
-                            </ul>
                         </div>
+                        <!-- /search popup -->
                     </div>
-                    <div class="grids5-info">
-                        <h4>02.</h4>
-                        <div class="blog-info">
-                            <a href="#blog-single" class="blog-desc1"> One major difference between a normal blog and a good blog is the detailing.
-                            </a>
-                            <div class="author align-items-center mt-2 mb-1">
-                                <a href="#author">Johnson smith</a> in <a href="#url">Design</a>
-                            </div>
-                            <ul class="blog-meta">
-                                <li class="meta-item blog-lesson">
-                                    <span class="meta-value"> April 13, 2020 </span>
-                                </li>
-                                <li class="meta-item blog-students">
-                                    <span class="meta-value"> 6min read</span>
-                                </li>
-                            </ul>
+                </div>
+
+                <!-- toggle switch for light and dark theme -->
+                <div class="mobile-position">
+                    <nav class="navigation">
+                        <div class="theme-switch-wrapper">
+                            <label class="theme-switch" for="checkbox">
+                                <input type="checkbox" id="checkbox">
+                                <div class="mode-container">
+                                    <i class="gg-sun"></i>
+                                    <i class="gg-moon"></i>
+                                </div>
+                            </label>
                         </div>
+                    </nav>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <!-- //header -->
+
+    <!-- breadcrumbs -->
+    <nav id="breadcrumbs" class="breadcrumbs">
+        <div class="container page-wrapper">
+            <a href="index.php">Home</a> » <span class="breadcrumb_last" aria-current="page">Lifestyle Posts</span>
+        </div>
+    </nav>
+    <!-- //breadcrumbs -->
+
+    <!-- Lifestyle Posts -->
+    <div class="w3l-homeblock1">
+        <div class="container pt-lg-5 pt-md-4">
+            <div class="row">
+                <div class="col-lg-9 most-recent">
+                    <h3 class="section-title-left">Lifestyle Posts</h3>
+                    <div class="row">
+                        <?php
+                        if ($result->num_rows > 0) {
+                            while ($row = $result->fetch_assoc()) {
+                        ?>
+                                <div class="col-lg-4 col-md-6 item">
+                                    <div class="card">
+                                        <div class="card-header p-0 position-relative">
+                                            <a href="single.php?id=<?php echo $row['id']; ?>">
+                                                <?php if (!empty($row['images'])): ?>
+                                                    <img class="card-img-bottom d-block radius-image-full"
+                                                        src="admin/<?php echo htmlspecialchars($row['images']); ?>"
+                                                        alt="<?php echo htmlspecialchars($row['judul']); ?>"
+                                                        loading="lazy"
+                                                        style="height: 200px; object-fit: cover;">
+                                                <?php else: ?>
+                                                    <img class="card-img-bottom d-block radius-image-full"
+                                                        src="assets/images/default-image.jpg"
+                                                        alt="Default Image"
+                                                        loading="lazy"
+                                                        style="height: 200px; object-fit: cover;">
+                                                <?php endif; ?>
+                                            </a>
+                                        </div>
+                                        <div class="card-body blog-details">
+                                            <span class="label-blue">Lifestyle</span>
+                                            <a href="single.php?id=<?php echo $row['id']; ?>" class="blog-desc">
+                                                <?php echo htmlspecialchars($row['judul']); ?>
+                                            </a>
+                                            <p><?php echo substr(strip_tags($row['isi']), 0, 100) . '...'; ?></p>
+                                            <div class="author align-items-center mt-3 mb-1">
+                                                <div class="author-left">
+                                                    <span class="meta-item">
+                                                        <i class="far fa-user"></i> <?php echo htmlspecialchars($row['author']); ?>
+                                                    </span>
+                                                </div>
+                                                <div class="author-right">
+                                                    <span class="meta-item">
+                                                        <i class="far fa-calendar-alt"></i>
+                                                        <?php echo date('M d, Y', strtotime($row['tanggal_publikasi'])); ?>
+                                                    </span>
+                                                    <span class="meta-item">
+                                                        <i class="fas fa-eye"></i> <?php echo number_format($row['view']); ?> views
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                        <?php
+                            }
+                        } else {
+                            echo "<div class='col-12'><p class='text-center'>No lifestyle articles available.</p></div>";
+                        }
+                        ?>
                     </div>
-                    <div class="grids5-info">
-                        <h4>03.</h4>
-                        <div class="blog-info">
-                            <a href="#blog-single" class="blog-desc1"> When should you start putting ads on your blog?
-                            </a>
-                            <div class="author align-items-center mt-2 mb-1">
-                                <a href="#author">Johnson smith</a> in <a href="#url">Design</a>
-                            </div>
-                            <ul class="blog-meta">
-                                <li class="meta-item blog-lesson">
-                                    <span class="meta-value"> April 13, 2020 </span>
-                                </li>
-                                <li class="meta-item blog-students">
-                                    <span class="meta-value"> 6min read</span>
-                                </li>
-                            </ul>
+
+                    <!-- Pagination -->
+                    <?php if ($total_pages > 1): ?>
+                        <div class="pagination">
+                            <?php if ($page > 1): ?>
+                                <a href="?page=1" title="First page">&laquo; First</a>
+                                <a href="?page=<?php echo $page - 1; ?>" title="Previous page">&lsaquo; Prev</a>
+                            <?php endif; ?>
+
+                            <?php
+                            $start_page = max(1, $page - 2);
+                            $end_page = min($total_pages, $page + 2);
+
+                            for ($i = $start_page; $i <= $end_page; $i++):
+                            ?>
+                                <?php if ($i == $page): ?>
+                                    <strong title="Current page"><?php echo $i; ?></strong>
+                                <?php else: ?>
+                                    <a href="?page=<?php echo $i; ?>" title="Page <?php echo $i; ?>"><?php echo $i; ?></a>
+                                <?php endif; ?>
+                            <?php endfor; ?>
+
+                            <?php if ($page < $total_pages): ?>
+                                <a href="?page=<?php echo $page + 1; ?>" title="Next page">Next &rsaquo;</a>
+                                <a href="?page=<?php echo $total_pages; ?>" title="Last page">Last &raquo;</a>
+                            <?php endif; ?>
                         </div>
-                    </div>
-                    <div class="grids5-info">
-                        <h4>04.</h4>
-                        <div class="blog-info">
-                            <a href="#blog-single" class="blog-desc1"> What should be the name of your blog domain?
-                            </a>
-                            <div class="author align-items-center mt-3 mb-1">
-                                <a href="#author">Johnson smith</a> in <a href="#url">Design</a>
-                            </div>
-                            <ul class="blog-meta">
-                                <li class="meta-item blog-lesson">
-                                    <span class="meta-value"> April 13, 2020 </span>
-                                </li>
-                                <li class="meta-item blog-students">
-                                    <span class="meta-value"> 6min read</span>
-                                </li>
-                            </ul>
-                        </div>
+                    <?php endif; ?>
+                </div>
+
+                <div class="col-lg-3 trending mt-lg-0 mt-5 mb-lg-5">
+                    <div class="pos-sticky">
+                        <h3 class="section-title-left mb-4">Trending in Lifestyle</h3>
+                        <?php
+                        if ($result_trending->num_rows > 0) {
+                            $counter = 1;
+                            while ($trend = $result_trending->fetch_assoc()) {
+                        ?>
+                                <div class="trending-post mb-4">
+                                    <div class="post-content">
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <span class="trend-number">
+                                                #<?php echo $counter; ?>
+                                            </span>
+                                            <span class="view-count">
+                                                <i class="fas fa-eye"></i> <?php echo number_format($trend['view']); ?> views
+                                            </span>
+                                        </div>
+                                        <h5 class="post-title">
+                                            <a href="single.php?id=<?php echo $trend['id']; ?>">
+                                                <?php echo htmlspecialchars(substr($trend['judul'], 0, 60)) . (strlen($trend['judul']) > 60 ? '...' : ''); ?>
+                                            </a>
+                                        </h5>
+                                        <div class="post-meta">
+                                            <span class="meta-item mr-3">
+                                                <i class="far fa-user mr-1"></i>
+                                                <?php echo htmlspecialchars($trend['author']); ?>
+                                            </span>
+                                            <span class="meta-item">
+                                                <i class="far fa-calendar-alt mr-1"></i>
+                                                <?php echo date('M d, Y', strtotime($trend['tanggal_publikasi'])); ?>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <?php if ($counter < 5): ?>
+                                        <hr>
+                                    <?php endif; ?>
+                                </div>
+                        <?php
+                                $counter++;
+                            }
+                        } else {
+                            echo "<p>No trending articles available.</p>";
+                        }
+                        ?>
                     </div>
                 </div>
             </div>
         </div>
-        <!-- //block-->
+    </div>
+    <!-- //Lifestyle Posts -->
 
-        <!-- ad block -->
-        <div class="ad-block text-center mt-5">
-            <a href="#url"><img src="assets/images/ad.gif" class="img-fluid" alt="ad image" /></a>
+    <!-- footer -->
+    <footer class="w3l-footer-16">
+        <div class="footer-content py-lg-5 py-4 text-center">
+            <div class="container">
+                <div class="copy-right">
+                    <h6>© 2024 Web Programming Blog . Made with <span class="fa fa-heart" aria-hidden="true"></span> by <i>(your name)</i><br>Designed by
+                        <a href="https://w3layouts.com" target="_blank" rel="noopener">W3layouts</a>
+                    </h6>
+                </div>
+                <ul class="author-icons mt-4">
+                    <li><a class="facebook" href="#url"><span class="fa fa-facebook" aria-hidden="true"></span></a></li>
+                    <li><a class="twitter" href="#url"><span class="fa fa-twitter" aria-hidden="true"></span></a></li>
+                    <li><a class="google" href="#url"><span class="fa fa-google-plus" aria-hidden="true"></span></a></li>
+                    <li><a class="linkedin" href="#url"><span class="fa fa-linkedin" aria-hidden="true"></span></a></li>
+                    <li><a class="github" href="#url"><span class="fa fa-github" aria-hidden="true"></span></a></li>
+                    <li><a class="dribbble" href="#url"><span class="fa fa-dribbble" aria-hidden="true"></span></a></li>
+                </ul>
+                <button onclick="topFunction()" id="movetop" title="Go to top">
+                    <span class="fa fa-angle-up"></span>
+                </button>
+            </div>
         </div>
-        <!-- //ad block -->
-    </div>
-</div>
 
-<!-- footer -->
-<footer class="w3l-footer-16">
-  <div class="footer-content py-lg-5 py-4 text-center">
-    <div class="container">
-      <div class="copy-right">
-        <h6>© 2020 Design Blog . Made with <span class="fa fa-heart" aria-hidden="true"></span>, Designed by <a
-            href="https://w3layouts.com">W3layouts</a> </h6>
-      </div>
-      <ul class="author-icons mt-4">
-        <li><a class="facebook" href="#url"><span class="fa fa-facebook" aria-hidden="true"></span></a> </li>
-        <li><a class="twitter" href="#url"><span class="fa fa-twitter" aria-hidden="true"></span></a></li>
-        <li><a class="google" href="#url"><span class="fa fa-google-plus" aria-hidden="true"></span></a></li>
-        <li><a class="linkedin" href="#url"><span class="fa fa-linkedin" aria-hidden="true"></span></a></li>
-        <li><a class="github" href="#url"><span class="fa fa-github" aria-hidden="true"></span></a></li>
-        <li><a class="dribbble" href="#url"><span class="fa fa-dribbble" aria-hidden="true"></span></a></li>
-      </ul>
-      <button onclick="topFunction()" id="movetop" title="Go to top">
-        <span class="fa fa-angle-up"></span>
-      </button>
-    </div>
-  </div>
+        <!-- move top -->
+        <script>
+            // When the user scrolls down 20px from the top of the document, show the button
+            window.onscroll = function() {
+                scrollFunction()
+            };
 
-  <!-- move top -->
-  <script>
-    // When the user scrolls down 20px from the top of the document, show the button
-    window.onscroll = function () {
-      scrollFunction()
-    };
+            function scrollFunction() {
+                if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+                    document.getElementById("movetop").style.display = "block";
+                } else {
+                    document.getElementById("movetop").style.display = "none";
+                }
+            }
 
-    function scrollFunction() {
-      if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
-        document.getElementById("movetop").style.display = "block";
-      } else {
-        document.getElementById("movetop").style.display = "none";
-      }
-    }
+            // When the user clicks on the button, scroll to the top of the document
+            function topFunction() {
+                document.body.scrollTop = 0;
+                document.documentElement.scrollTop = 0;
+            }
+        </script>
+        <!-- //move top -->
+    </footer>
+    <!-- //footer -->
 
-    // When the user clicks on the button, scroll to the top of the document
-    function topFunction() {
-      document.body.scrollTop = 0;
-      document.documentElement.scrollTop = 0;
-    }
-  </script>
-  <!-- //move top -->
-</footer>
-<!-- //footer -->
+    <!-- Template JavaScript -->
+    <script src="assets/js/theme-change.js"></script>
 
-<!-- Template JavaScript -->
-<script src="assets/js/theme-change.js"></script>
+    <script src="assets/js/jquery-3.3.1.min.js"></script>
 
-<script src="assets/js/jquery-3.3.1.min.js"></script>
+    <!-- disable body scroll which navbar is in active -->
+    <script>
+        $(function() {
+            $('.navbar-toggler').click(function() {
+                $('body').toggleClass('noscroll');
+            })
+        });
+    </script>
+    <!-- disable body scroll which navbar is in active -->
 
-<!-- disable body scroll which navbar is in active -->
-<script>
-  $(function () {
-    $('.navbar-toggler').click(function () {
-      $('body').toggleClass('noscroll');
-    })
-  });
-</script>
-<!-- disable body scroll which navbar is in active -->
-
-<script src="assets/js/bootstrap.min.js"></script>
+    <script src="assets/js/bootstrap.min.js"></script>
 
 </body>
 
