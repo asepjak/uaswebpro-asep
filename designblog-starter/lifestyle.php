@@ -48,7 +48,7 @@ Author URL: http://w3layouts.com
 							Categories <span class="fa fa-angle-down"></span>
 						</a>
 						<div class="dropdown-menu" aria-labelledby="navbarDropdown">
-							<a class="dropdown-item @@cp__active" href="technology.html">Technology posts</a>
+							<a class="dropdown-item @@cp__active" href="teknologi.php">Technology posts</a>
 							<a class="dropdown-item active" href="lifestyle.html">Lifestyle posts</a>
 						</div>
 					</li>

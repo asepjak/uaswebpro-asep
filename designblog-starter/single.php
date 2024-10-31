@@ -226,7 +226,7 @@ $related_articles = $stmt_related->get_result();
 
                         <div class="article-meta">
                             <div class="d-flex align-items-center mb-3">
-                                <img src="assets/images/author-default.jpg" alt="Author" class="rounded-circle mr-2" style="width: 40px; height: 40px;">
+                                <!-- Author image removed -->
                                 <div>
                                     <strong><?php echo htmlspecialchars($article['author']); ?></strong>
                                     <div class="text-muted">
@@ -242,6 +242,7 @@ $related_articles = $stmt_related->get_result();
                                 </div>
                             </div>
                         </div>
+
 
                         <?php if (!empty($article['images'])): ?>
                             <img src="admin/<?php echo htmlspecialchars($article['images']); ?>"
