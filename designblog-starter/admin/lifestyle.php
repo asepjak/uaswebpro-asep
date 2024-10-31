@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -11,6 +12,7 @@
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" />
 </head>
+
 <body class="sb-nav-fixed">
     <?php include '../database/config.php'; ?>
 
@@ -22,8 +24,8 @@
             <nav class="sb-sidenav accordion sb-sidenav-light" id="sidenavAccordion">
                 <div class="sb-sidenav-menu">
                     <div class="nav">
-                    <a class="nav-link" href="../frontend/index.html">
-                    <div class="sb-nav-link-icon"><i class="fas fa-home"></i></div>
+                        <a class="nav-link" href="../frontend/index.html">
+                            <div class="sb-nav-link-icon"><i class="fas fa-home"></i></div>
                             Back to Homepage
                         </a>
                         <a class="nav-link" href="admin.php">
@@ -123,6 +125,8 @@
                                 </thead>
                                 <tbody>
                                     <?php
+                                    include '../database/config.php'; // Menghubungkan dengan database
+
                                     $sql = "SELECT * FROM artikel WHERE kategori = 'lifestyle' ORDER BY id DESC";
                                     $result = $conn->query($sql);
 
@@ -160,4 +164,5 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
     <script src="js/scripts.js"></script>
 </body>
+
 </html>

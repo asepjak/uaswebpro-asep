@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -11,8 +12,10 @@
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" />
 </head>
+
 <body class="sb-nav-fixed">
-    <?php include '../database/config.php'; // Pastikan file konfigurasi sudah benar ?>
+    <?php include '../database/config.php'; // Pastikan file konfigurasi sudah benar 
+    ?>
 
     <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
         <a class="navbar-brand ps-3" href="index.html">Admin Panel</a>
@@ -22,7 +25,7 @@
             <nav class="sb-sidenav accordion sb-sidenav-light" id="sidenavAccordion">
                 <div class="sb-sidenav-menu">
                     <div class="nav">
-                        <a class="nav-link" href="../frontend/index.html">
+                        <a class="nav-link" href="../index.php">
                             <div class="sb-nav-link-icon"><i class="fas fa-home"></i></div>
                             Back to Homepage
                         </a>
@@ -123,7 +126,9 @@
                                 </thead>
                                 <tbody>
                                     <?php
-                                    $sql = "SELECT * FROM artikel ORDER BY id DESC";
+                                    include '../database/config.php'; // Menghubungkan dengan database
+
+                                    $sql = "SELECT * FROM artikel WHERE kategori = 'teknologi' ORDER BY id DESC";
                                     $result = $conn->query($sql);
 
                                     if ($result && $result->num_rows > 0) {
@@ -160,4 +165,5 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
     <script src="js/scripts.js"></script>
 </body>
+
 </html>
